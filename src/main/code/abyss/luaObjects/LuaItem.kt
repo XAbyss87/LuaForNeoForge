@@ -11,7 +11,8 @@ import net.minecraft.world.level.Level
 // Wrapper for custom Item class
 class LuaItem(properties: Properties) : Item(properties) {
 
-    private val eventRegistry = EventRegistry()
+    @JvmField
+    val events = EventRegistry()
 
     override fun use(
         level: Level,
@@ -22,7 +23,7 @@ class LuaItem(properties: Properties) : Item(properties) {
         val stack = player.getItemInHand(hand)
 
         if (!level.isClientSide) {
-            eventRegistry.callEvent("use", level, player, hand)
+            events.callEvent("onUse", level, player, hand)
         }
 
         return InteractionResultHolder.sidedSuccess(

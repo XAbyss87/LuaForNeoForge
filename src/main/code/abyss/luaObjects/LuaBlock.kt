@@ -8,7 +8,9 @@ import net.minecraft.world.level.block.state.BlockState
 
 // Wrapper for custom Block class
 class LuaBlock(properties: Properties) : Block(properties) {
-    private val eventRegistry = EventRegistry()
+
+    @JvmField
+    val events = EventRegistry()
 
     override fun onPlace(
         state: BlockState,
@@ -16,7 +18,7 @@ class LuaBlock(properties: Properties) : Block(properties) {
         pos: BlockPos,
         oldState: BlockState,
         movedByPiston: Boolean ) {
-        eventRegistry.callEvent("onPlace", state, level, pos, oldState, movedByPiston)
+        events.callEvent("onPlace", state, level, pos, oldState, movedByPiston)
     }
 
     override fun onRemove(
@@ -26,7 +28,7 @@ class LuaBlock(properties: Properties) : Block(properties) {
         oldState: BlockState,
         movedByPiston: Boolean
     ) {
-        eventRegistry.callEvent("onBroken", state, level, pos, oldState, movedByPiston)
+        events.callEvent("onBroken", state, level, pos, oldState, movedByPiston)
     }
 
     fun detonate(level: Level, pos: BlockPos, explosionRadius: Float = 4.0f) {

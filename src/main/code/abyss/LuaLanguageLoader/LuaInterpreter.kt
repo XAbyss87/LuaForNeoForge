@@ -27,11 +27,11 @@ internal object LuaModsLoader {
         lua.run(script)
     }
 
-    internal fun injectLuaMod(modID: String, modBus: IEventBus, source: String) {
+    internal fun injectLuaMod(modID: String, modBus: IEventBus, source: String, apiInstace: LuaAPI) {
         // Register a Lua mod source with its own environment
         System.out.println("[luafml] injecting $modID.")
 
-        lua.get("LoadMod").call(modID, modBus, source, LuaAPI(modID, modBus))
+        lua.get("LoadMod").call(modID, modBus, source, apiInstace)
 
         System.out.println("[luafml] mod $modID injected successfully.")
     }

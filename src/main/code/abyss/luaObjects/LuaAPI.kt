@@ -2,6 +2,8 @@ package abyss.luaObjects
 
 import abyss.LuaCore
 import abyss.registers.RegistrationHandler
+import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredItem
@@ -18,11 +20,26 @@ class LuaAPI(modID: String, modBus: IEventBus) {
         LuaCore.LOGGER.warn(text)
     }
 
-    fun item(name: String): DeferredItem<LuaItem>?{
+    fun item(name: String): DeferredItem<LuaItem>? {
         return registrationHandler.registerItem(name)
     }
 
     fun block(name: String, blockItem: Boolean = false): DeferredBlock<LuaBlock>? {
         return registrationHandler.registerBlock(name, blockItem)
+    }
+
+    fun ClientMessage(text: String, player: Player){
+        player.displayClientMessage(
+            Component.literal(text),
+            false
+        )
+    }
+
+    fun getItem(item: DeferredItem<LuaItem>): LuaItem {
+        return item.get()
+    }
+
+    fun getBlock(block: DeferredBlock<LuaBlock>): LuaBlock {
+        return block.get()
     }
 }

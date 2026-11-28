@@ -3,11 +3,12 @@ package abyss.LuaLanguageLoader.containers
 import abyss.LuaCore
 import abyss.LuaLanguageLoader.LuaLanguageLoader
 import abyss.LuaLanguageLoader.LuaModsLoader.injectLuaMod
+import abyss.luaObjects.LuaAPI
 import net.neoforged.bus.api.BusBuilder
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.ModList
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent
 import net.neoforged.neoforgespi.language.IModInfo
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -28,6 +29,8 @@ class LuaModContainer(info: IModInfo) : ModContainer(info) {
         .allowPerPhasePost()
         .build()
 
+    private val API = LuaAPI(modId, eventBus)
+
     init {
         logger.info("[luafml] loading mod: $modId")
     }
@@ -36,9 +39,9 @@ class LuaModContainer(info: IModInfo) : ModContainer(info) {
         return eventBus
     }
 
-    private fun HookOnLoadCompleteEvent(){
+    private fun HookNeoForgeEventBus(){
 
-        // Subscribe to NeoForges event bus to act on its 'FMLLoadCompleteEvent'
+        // Subscribe to NeoForges event bus to act on its 'FMLConstructModEvent'
         val neoForgeBus = ModList.get()
             .getModContainerById("neoforge")
             .orElse(null)
@@ -47,13 +50,13 @@ class LuaModContainer(info: IModInfo) : ModContainer(info) {
         if (neoForgeBus != null &&
             LuaLanguageLoader.SubscribedToNeoForgeBus.compareAndSet(false, true)
         ) {
-            LuaCore.luaDebug("Hooking into FMLLoadCompleteEvent")
+            LuaCore.luaDebug("Hooking into FMLConstructModEvent")
             neoForgeBus.addListener(
-                FMLLoadCompleteEvent::class.java
+                FMLConstructModEvent::class.java
             ) { event ->
-                event.enqueueWork(Runnable {
+                event.enqueueWork {
                     LuaCore.initialize()
-                })
+                }
             }
         }
     }
@@ -80,9 +83,9 @@ class LuaModContainer(info: IModInfo) : ModContainer(info) {
             }
 
             // Finally load the files
-            luaFiles.forEach { injectLuaMod(modId, eventBus, it.readText()) }
+            luaFiles.forEach { injectLuaMod(modId, eventBus, it.readText(), API) }
 
-            HookOnLoadCompleteEvent()
+            HookNeoForgeEventBus()
 
         } catch (error: Error) {
             logger.error("Error loading Lua mod '{}': {}", modId, error.message)

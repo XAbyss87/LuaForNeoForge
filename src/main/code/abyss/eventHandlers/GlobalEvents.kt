@@ -14,6 +14,10 @@ object GlobalEvents : EventRegistry() {
         callEvent("onStart")
     }
 
+    fun onRegister(){
+        callEvent("onRegister")
+    }
+
     // NeoForge events
     @SubscribeEvent
     fun onPlayerLoggedIn(event: PlayerEvent.PlayerLoggedInEvent) {
