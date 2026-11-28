@@ -1,23 +1,25 @@
 package abyss.eventHandlers
 
+import abyss.LuaCore
 import party.iroiro.luajava.value.LuaValue
-import abyss.Luaforneoforge
 
+// Framework for custom events system
 open class EventRegistry {
     private val listeners = mutableMapOf<String, MutableList<LuaValue>>()
 
     fun callEvent(eventName: String, vararg args: Any) {
+
+        LuaCore.luaDebug("[luafml] ___Event '$eventName' Called___")
+
         listeners[eventName]?.forEach {
-            if (Luaforneoforge.DEBUG)
-                Luaforneoforge.luaDebug("___Event '$eventName' Called For '$it'___")
+            LuaCore.luaDebug("[luafml] ___Event '$eventName' Called For '$it'___")
 
             it.call(*args)
         }
     }
 
     fun registerEvent(eventName: String, luaFunc: LuaValue) {
-        if (Luaforneoforge.DEBUG)
-            Luaforneoforge.luaDebug("___Registered Event Listener For '$eventName' By '$luaFunc'___")
+        LuaCore.luaDebug("[luafml] ___Registered Event Listener For '$eventName' By '$luaFunc'___")
 
         listeners.getOrPut(eventName) { mutableListOf() }.add(luaFunc)
     }

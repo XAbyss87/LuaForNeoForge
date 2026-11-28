@@ -1,6 +1,7 @@
-local environments = {}
+-- Helper script to allow mods to share their own environment and globals
 
-function LoadMod(modId, source)
+local environments = {}
+function LoadMod(modId, modBus, source, APIInstance)
     local env = environments[modId]
 
     if not env then
@@ -9,7 +10,9 @@ function LoadMod(modId, source)
         env._G = env
 
         setmetatable(env, {
-            __index = _G
+            __index = _G,
+            API = APIInstance,
+            MOD_ID = modId
         })
 
         environments[modId] = env

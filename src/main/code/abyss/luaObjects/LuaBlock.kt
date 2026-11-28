@@ -6,6 +6,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 
+// Wrapper for custom Block class
 class LuaBlock(properties: Properties) : Block(properties) {
     private val eventRegistry = EventRegistry()
 

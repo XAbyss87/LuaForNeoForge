@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
+// Wrapper for custom Item class
 class LuaItem(properties: Properties) : Item(properties) {
 
     private val eventRegistry = EventRegistry()
